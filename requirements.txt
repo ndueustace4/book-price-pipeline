@@ -1,0 +1,8 @@
+beautifulsoup4
+fastapi
+httpx
+psycopg[binary]
+pytest
+python-dotenv
+requests
+uvicorn
