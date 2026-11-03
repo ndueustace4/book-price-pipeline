@@ -3,18 +3,24 @@
 Run locally:  uvicorn api.main:app --reload
 Docs:         http://127.0.0.1:8000/docs
 """
+import os
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from psycopg.rows import dict_row
 
+from api.quotes import router as quotes_router
 from pipeline.db import get_conn
 
 app = FastAPI(title="Book Price Pipeline API", version="1.0.0")
+app.include_router(quotes_router)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],  # add your deployed frontend URL later
+    allow_origins=os.getenv(
+        "CORS_ORIGINS",
+        "http://localhost:5173,http://localhost:3000,http://localhost:8080",
+    ).split(","),
     allow_methods=["GET"],
     allow_headers=["*"],
 )

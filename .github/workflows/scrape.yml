@@ -28,6 +28,19 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
+      - run: python -m playwright install --with-deps chromium
       - run: python run_books.py
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - run: python run_quotes.py
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  docker:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f api/Dockerfile -t book-api .
+      - run: docker build -f frontend/Dockerfile -t book-web ./frontend
+      - run: docker build -f Dockerfile.scraper -t book-scraper .
